@@ -1,5 +1,7 @@
 # Solana Whitelist
 
+![screencapture](https://github.com/BankkRoll/solana-whitelist/assets/106103625/9b03e3dd-f054-479e-a29b-272a1078be5c)
+
 ## Description
 Set up a whitelist registration for a Solana-based project.
 
