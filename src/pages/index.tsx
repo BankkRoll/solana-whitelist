@@ -22,28 +22,34 @@ import React, { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/utils/supabaseClient";
 import { toast } from "sonner";
-import { useRegistrationStatus } from "@/lib/useRegistrationStatus";
+import { useRegistrationStatus } from "@/utils/useRegistrationStatus";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useWalletBalanceCheck } from "@/lib/useBalance";
+import { useWalletBalanceCheck } from "@/utils/useBalance";
 import whitelistData from "@/config/config";
 
 export default function Home() {
   const { select, wallets, publicKey, disconnect } = useWallet();
   const isRegistrationOpen = useRegistrationStatus(whitelistData);
+  const [isChecking, setIsChecking] = useState(false);
+  const [twitterButtonText, setTwitterButtonText] = useState("Follow");
   const { balance, isBalanceHighEnough } = useWalletBalanceCheck(
     publicKey?.toBase58() || null,
     whitelistData
   );
+
   const userAddress = useMemo(() => publicKey?.toBase58() || "", [publicKey]);
   const [discordUsername, setDiscordUsername] = useState("");
-  const [isChecking, setIsChecking] = useState(false);
 
-  const handleSubmit = () => {
-    if (!publicKey || !discordUsername) {
-      toast.error(
-        "Project submission failed. We are working on discord verification."
-      );
+  const handleSubmit = async () => {
+    if (!publicKey) {
+      toast.error("Please connect your wallet.");
+      return;
+    }
+
+    if (!discordUsername) {
+      toast.error("We are working on discord verification.");
       return;
     }
 
@@ -53,7 +59,42 @@ export default function Home() {
       );
       return;
     }
-    toast.success("Project submission successful.");
+
+    const followedStatus = isChecking ? "Followed" : "Not Followed";
+
+    const entryData = {
+      useraddress: userAddress || null,
+      discordusername: discordUsername || null,
+      balance: balance || null,
+      followed: followedStatus,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      const { data, error } = await supabase
+        .from("whitelist")
+        .insert([entryData]);
+
+      if (error) {
+        if (
+          error.message.includes(
+            "duplicate key value violates unique constraint"
+          )
+        ) {
+          toast.error("Entry already found. You cannot apply again.");
+        } else {
+          console.error(error);
+          toast.error(
+            "Error submitting data: " + (error.message || "Unknown error")
+          );
+        }
+      } else {
+        toast.success("Project submission successful.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred while submitting the data.");
+    }
   };
 
   const handleFollow = async () => {
@@ -71,7 +112,7 @@ export default function Home() {
       return new Promise<void>((resolve) => {
         setTimeout(() => {
           resolve();
-        }, 40000);
+        }, 20000);
       });
     };
 
@@ -85,6 +126,7 @@ export default function Home() {
       await ApiCheck();
       clearInterval(loadingInterval);
       toast.dismiss();
+      setTwitterButtonText("Followed");
       toast.success("Followed successfully!");
     } catch (error) {
       console.error("Follow failed:", error);
@@ -278,9 +320,9 @@ export default function Home() {
                             value={publicKey.toBase58()}
                             disabled
                           />
-                          <span className="text-xs ml-2 text-green-500 flex-shrink-0">
+                          <Button disabled className="text-xs">
                             Connected
-                          </span>
+                          </Button>
                         </div>
                       ) : (
                         <div className="flex items-center w-full ml-2">
@@ -293,9 +335,7 @@ export default function Home() {
                           />
                           <Credenza>
                             <CredenzaTrigger asChild>
-                              <Button className="text-xs">
-                                Connect Wallet
-                              </Button>
+                              <Button className="text-xs">Select Wallet</Button>
                             </CredenzaTrigger>
                             <CredenzaContent className="max-w-sm mx-auto">
                               <CredenzaHeader className="text-center justify-center items-center">
@@ -420,8 +460,13 @@ export default function Home() {
                           and stay updated.
                         </span>
                       </div>
-                      <Button onClick={handleFollow} disabled={isChecking}>
-                        {isChecking ? "Checking..." : "Follow"}
+                      <Button
+                        onClick={handleFollow}
+                        disabled={
+                          isChecking || twitterButtonText === "Followed"
+                        }
+                      >
+                        {isChecking ? "Checking..." : twitterButtonText}
                       </Button>
                     </div>
                     <p className="mt-2 text-xs text-gray-500">
@@ -431,8 +476,14 @@ export default function Home() {
                 </CardContent>
 
                 <CardFooter className="flex justify-center">
+                  {/* TODO: Add discord handle check */}
                   <Button
-                    disabled={!isBalanceHighEnough}
+                    disabled={
+                      !isBalanceHighEnough ||
+                      !userAddress ||
+                      !balance ||
+                      twitterButtonText === "Follow"
+                    }
                     onClick={handleSubmit}
                   >
                     Sign up for {whitelistData.projectName} Whitelist

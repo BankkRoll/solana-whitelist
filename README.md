@@ -6,8 +6,9 @@
 Set up a whitelist registration for a Solana-based project.
 
 ## In Progress
+- [x] Database Connection to store Entries 
 - [ ] Discord Connection Verification
-- [ ] Database Connection to store Entries 
+- [ ] Implement Auto Shutdown at max entries
 
 ## Installation
 1. Clone this repository to your local machine:
@@ -49,6 +50,32 @@ Set up a whitelist registration for a Solana-based project.
    - `numberOfWinners`: Number of winners for the whitelist.
    - `verifyDiscordRole`: Discord role information for verification.
    - `verifyDiscordMembership`: Discord membership information for verification.
+
+3.    Open the `.env.example` file in your project directory. Copy the contents of `.env.example` into a new file named `.env` in the same directory. Update the following variables in your `.env` file:
+
+```sql
+   For Supabase DB setup:
+   - `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL.
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anon (public) key.
+
+   For Discord OAuth setup:
+   - `DISCORD_CLIENT_ID`: Your Discord application's Client ID.
+   - `DISCORD_CLIENT_SECRET`: Your Discord application's Client Secret.
+   - `DISCORD_REDIRECT_URI`: The URI where users will be redirected after successful authentication with Discord.
+```
+
+
+4. Set up the supabase table for managing the whitelist. Open your SQL tool and execute the following SQL statement to create the whitelist table
+
+```sql
+CREATE TABLE whitelist (
+    useraddress VARCHAR(255) PRIMARY KEY,
+    discordusername VARCHAR(255),
+    balance NUMERIC,
+    followed BOOLEAN,
+    timestamp TIMESTAMP WITH TIME ZONE
+);
+```
 
 ## Development
 To run the project, run the following command:
