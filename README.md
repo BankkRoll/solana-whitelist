@@ -6,9 +6,13 @@
 Set up a whitelist registration for a Solana-based project.
 
 ## In Progress
-- [x] Database Connection to store Entries 
 - [ ] Discord Connection Verification
 - [ ] Implement Auto Shutdown at max entries
+
+- [x] Database Connection to store Entries 
+- [x] Implement countdown
+- [x] Implement twitter/discord entry toggle
+- [x] Implement start and end time auto Active/Inactive
 
 ## Installation
 1. Clone this repository to your local machine:
@@ -50,6 +54,9 @@ Set up a whitelist registration for a Solana-based project.
    - `numberOfWinners`: Number of winners for the whitelist.
    - `verifyDiscordRole`: Discord role information for verification.
    - `verifyDiscordMembership`: Discord membership information for verification.
+
+   - `requireTwitterFollow`: True or False to show/hide the twitter steps
+   - `requireDiscordJoin`: True or False to show/hide the discord steps
 
 3.    Open the `.env.example` file in your project directory. Copy the contents of `.env.example` into a new file named `.env` in the same directory. Update the following variables in your `.env` file:
 
@@ -94,6 +101,30 @@ This will start the development server, and you can access your project at `http
 3. Follow the project's Twitter account and join the Discord server for verification.
 
 4. Click the "Sign up for Test Project Whitelist" button to register.
+
+## Exporting the Whitelist
+
+You can export the whitelist of user addresses to a JSON file named `whitelist.json` by running the `getWhitelist.js` script. Follow these steps to export the whitelist:
+
+Make sure to replace `"YOUR_SUPABASE_URL"` and `"YOUR_SUPABASE_ANON_KEY"` in the script with your actual Supabase credentials before running it.
+
+Run the script using the following command:
+
+```bash
+npm run whitelist
+```
+
+The script will connect to your Supabase database, fetch the user addresses, and save them to a file named `whitelist.json` in the same directory as the script. You can now access the `whitelist.json` file, which contains the list of user addresses.
+
+Output Example:
+
+```json
+[
+xxxxxxxxxxxxxxxxx,
+xxxxxxxxxxxxxxxxx,
+xxxxxxxxxxxxxxxxx,
+]
+```
 
 ## Deployment
 To deploy your project to a production environment, follow your preferred deployment process. Ensure you configure your environment variables and server settings accordingly.
