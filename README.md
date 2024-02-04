@@ -6,13 +6,15 @@
 Set up a whitelist registration for a Solana-based project.
 
 ## In Progress
-- [ ] Discord Connection Verification
-- [ ] Implement Auto Shutdown at max entries
+- [ ] Discord Role Verification
+- [x] Discord Server Verification
 
-- [x] Database Connection to store Entries 
-- [x] Implement countdown
-- [x] Implement twitter/discord entry toggle
-- [x] Implement start and end time auto Active/Inactive
+- [x] Auto Shutdown at max entries
+- [x] Database Connection to store Entries
+- [x] Script to randomly choose and export winners 
+- [x] Live countdown
+- [x] Implement twitter/discord verification toggle (easy turn on/off)
+- [x] Implement start and end time auto Active/Inactive 
 
 ## Installation
 1. Clone this repository to your local machine:
@@ -79,7 +81,6 @@ CREATE TABLE whitelist (
     useraddress VARCHAR(255) PRIMARY KEY,
     discordusername VARCHAR(255),
     balance NUMERIC,
-    followed BOOLEAN,
     timestamp TIMESTAMP WITH TIME ZONE
 );
 ```
@@ -106,7 +107,9 @@ This will start the development server, and you can access your project at `http
 
 You can export the whitelist of user addresses to a JSON file named `whitelist.json` by running the `getWhitelist.js` script. Follow these steps to export the whitelist:
 
-Make sure to replace `"YOUR_SUPABASE_URL"` and `"YOUR_SUPABASE_ANON_KEY"` in the script with your actual Supabase credentials before running it.
+ 1. Add your Supabase URL.
+ 2. Add your Supabase anonymous key.
+ 3. Replace winnersAmount with the number of winners you want to export.
 
 Run the script using the following command:
 
@@ -114,7 +117,8 @@ Run the script using the following command:
 npm run whitelist
 ```
 
-The script will connect to your Supabase database, fetch the user addresses, and save them to a file named `whitelist.json` in the same directory as the script. You can now access the `whitelist.json` file, which contains the list of user addresses.
+The script will connect to your Supabase database, fetch all addresses, randomly select winners,
+ *    and export them to "winners.json" in the same directory. You can now access the `whitelist.json` file, which contains the list of user addresses.
 
 Output Example:
 
