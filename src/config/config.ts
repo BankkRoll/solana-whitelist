@@ -9,7 +9,7 @@ const whitelistData = {
   twitterUrl: "https://twitter.com/bankkroll_eth",
   discordUrl: "https://discord.gg/",
 
-  registrationLimit: 6,
+  registrationLimit: 500,
   registrationStartDate: "2024-02-01T12:00:00Z",
   registrationEndDate: "2024-03-10T12:00:00Z",
   minimumWalletBalance: 0,
@@ -24,7 +24,7 @@ const whitelistData = {
     name: "Verified",
   },
   verifyDiscordMembership: {
-    id: "970457608395841597",
+    id: "123456789123456789",
     name: "BankkRoll Server",
   },
 
